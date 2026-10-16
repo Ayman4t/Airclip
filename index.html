@@ -159,7 +159,7 @@ const card=$('#card'),stage=$('#stage'),input=$('#input');
 /* ---------- الإعدادات ---------- */
 const store={get(k,d){try{const v=localStorage.getItem('ac_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('ac_'+k,JSON.stringify(v))}catch(e){}}};
 $('#autoCopy').checked=store.get('autoCopy',true);
-$('#autoSync').checked=store.get('autoSync',false);
+$('#autoSync').checked=store.get('autoSync',true);
 $('#autoCopy').onchange=e=>store.set('autoCopy',e.target.checked);
 $('#autoSync').onchange=e=>{store.set('autoSync',e.target.checked);if(e.target.checked)poll(true)};
 
@@ -247,6 +247,13 @@ async function onData(m){
     else{pendingCopy=m.text;toast('📥 وصل نص جديد — المس الشاشة لنسخه')}
   }else toast('📥 وصلت بطاقة جديدة');
 }
+// عند عودة التركيز للصفحة (مثلاً الكمبيوتر) ننسخ آخر نص وصل أثناء غياب التركيز
+const flushCopy=async()=>{if(pendingCopy&&document.hasFocus()){const t=pendingCopy;if(await copyText(t)){pendingCopy=null;toast('⚡ تم نسخ النص إلى حافظتك تلقائياً!')}}};
+window.addEventListener('focus',flushCopy);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)flushCopy()});
+setInterval(flushCopy,800);
+// على الهاتف: أي لمسة تقرأ الحافظة (المتصفح يشترط لمسة من المستخدم)
+if(matchMedia('(pointer:coarse)').matches)document.addEventListener('pointerdown',e=>{if(!e.target.closest('#card,button,textarea,input,label'))poll(true)});
 // بعض المتصفحات تمنع النسخ دون لمسة المستخدم
 ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,async()=>{
   if(pendingCopy){const t=pendingCopy;pendingCopy=null;if(await copyText(t))toast('⚡ تم نسخ النص إلى حافظتك تلقائياً!')}
