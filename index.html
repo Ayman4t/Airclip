@@ -2,375 +2,224 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#070b14">
-<title>AirClip - الحافظة الذكية العابرة للأجهزة</title>
-<meta name="description" content="انقل الحافظة بين الكمبيوتر والهاتف لحظياً عبر اتصال P2P مباشر. من قناة AymanStack.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📎%3C/text%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AirClip - الحافظة الخلفية المباشرة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style>
-:root{--bg:#070b14;--text:#e6ebf5;--muted:#8b97b0;--cyan:#22d3ee;--violet:#a78bfa;--green:#4ade80;--red:#fb7185;--glass:rgba(255,255,255,.055);--line:rgba(255,255,255,.1)}
-*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100%}
-body{font-family:'Cairo',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-background-image:radial-gradient(600px 400px at 85% -5%,rgba(167,139,250,.16),transparent),radial-gradient(500px 380px at 5% 105%,rgba(34,211,238,.12),transparent);background-attachment:fixed;overflow-x:hidden}
-.wrap{max-width:860px;margin:0 auto;padding:18px 16px 40px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.35rem}
-.logo i{font-style:normal;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),var(--violet));color:#071018;font-size:1.2rem}
-.logo small{display:block;font-weight:400;font-size:.72rem;color:var(--muted);margin-top:-6px}
-.status{display:flex;align-items:center;gap:8px;font-size:.85rem;padding:6px 14px;border-radius:99px;background:var(--glass);border:1px solid var(--line)}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
-.status.on .dot{background:var(--green);box-shadow:0 0 10px var(--green)}
-.status.wait .dot{background:var(--violet);animation:pulse 1.2s infinite}
-@keyframes pulse{50%{opacity:.3}}
-.glass{background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:22px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-h1{font-size:clamp(1.6rem,5vw,2.3rem);font-weight:800;line-height:1.3;margin-bottom:8px}
-h2{font-size:1.05rem;font-weight:600;margin-bottom:12px}
-p.lead{color:var(--muted);margin-bottom:22px;max-width:56ch}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:680px){.grid{grid-template-columns:1fr}}
-button{font:inherit;cursor:pointer;border:0;color:var(--text)}
-.btn{padding:11px 20px;border-radius:14px;font-weight:600;background:var(--glass);border:1px solid var(--line);transition:.2s}
-.btn:hover{border-color:var(--cyan)}
-.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
-.btn.pri{background:linear-gradient(135deg,var(--cyan),var(--violet));color:#06101a;border:0}
-.btn.pri:hover{filter:brightness(1.1)}
-.btn.sm{padding:6px 12px;font-size:.82rem;border-radius:10px}
-input.code{width:100%;font:500 2rem 'Fira Code',monospace;letter-spacing:.5em;text-align:center;padding:12px 0 12px .5em;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:14px;color:var(--cyan);direction:ltr;margin-bottom:12px}
-.room{text-align:center}
-.room .num{font:500 3rem 'Fira Code',monospace;letter-spacing:.35em;color:var(--cyan);direction:ltr;text-shadow:0 0 24px rgba(34,211,238,.45);padding-left:.35em}
-#qr{display:inline-block;padding:10px;background:#fff;border-radius:14px;margin:12px 0}
-#qr img,#qr canvas{display:block}
-.hint{color:var(--muted);font-size:.85rem}
-.hidden{display:none!important}
-.toggles{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-.tg{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;background:var(--glass);border:1px solid var(--line);cursor:pointer;font-size:.88rem;user-select:none}
-.tg input{display:none}
-.tg b{width:34px;height:20px;border-radius:99px;background:#2a3348;position:relative;transition:.2s;flex:none}
-.tg b::after{content:"";position:absolute;top:3px;right:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
-.tg input:checked+b{background:var(--green)}
-.tg input:checked+b::after{right:17px}
-textarea{width:100%;min-height:90px;resize:vertical;padding:14px;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:14px;color:var(--text);font:400 .92rem 'Fira Code','Cairo',monospace;unicode-bidi:plaintext}
-.row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
-#stage{position:relative;height:270px;margin:18px 0;border-radius:22px;border:1.5px dashed rgba(167,139,250,.35);background:rgba(0,0,0,.18);overflow:hidden;touch-action:none}
-.edge{position:absolute;opacity:0;transition:opacity .2s;background:var(--cyan);filter:blur(10px)}
-.edge.t,.edge.b{left:0;right:0;height:6px}.edge.t{top:-3px}.edge.b{bottom:-3px}
-.edge.l,.edge.r{top:0;bottom:0;width:6px}.edge.l{left:-3px}.edge.r{right:-3px}
-.edge.hot{opacity:.9}
-#empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px;pointer-events:none}
-#card{position:absolute;left:50%;top:50%;width:min(86%,360px);max-height:80%;padding:16px 18px;border-radius:18px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
-background:linear-gradient(#111a2e,#111a2e) padding-box,linear-gradient(135deg,var(--cyan),var(--violet),var(--green)) border-box;border:1.5px solid transparent;
-box-shadow:0 0 34px rgba(34,211,238,.22),0 18px 40px rgba(0,0,0,.5);transform:translate(-50%,-50%)}
-#card:active{cursor:grabbing}
-#card .lbl{font-size:.75rem;color:var(--cyan);margin-bottom:6px;display:flex;justify-content:space-between}
-#card .body{font:400 .92rem 'Fira Code','Cairo',monospace;max-height:150px;overflow:hidden;white-space:pre-wrap;word-break:break-word;unicode-bidi:plaintext;mask-image:linear-gradient(#000 75%,transparent)}
-#hist{list-style:none;padding:0;display:grid;gap:10px}
-#hist li{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:rgba(0,0,0,.25);border:1px solid var(--line);border-inline-start:3px solid var(--cyan)}
-#hist li.in{border-inline-start-color:var(--green)}
-#hist .tx{flex:1;min-width:0;font:400 .85rem 'Fira Code','Cairo',monospace;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;unicode-bidi:plaintext;cursor:pointer}
-#hist small{display:block;color:var(--muted);font:400 .7rem 'Cairo'}
-.sec-head{display:flex;justify-content:space-between;align-items:center;margin:26px 0 12px}
-#toasts{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:0;right:0;display:grid;gap:8px;justify-items:center;pointer-events:none;z-index:50;padding:0 14px}
-.toast{padding:12px 20px;border-radius:16px;background:rgba(17,26,46,.92);border:1px solid var(--green);box-shadow:0 0 24px rgba(74,222,128,.25);backdrop-filter:blur(12px);font-weight:600;font-size:.92rem;animation:tin .3s ease-out}
-.toast.err{border-color:var(--red);box-shadow:0 0 24px rgba(251,113,133,.25)}
-@keyframes tin{from{opacity:0;transform:translateY(14px)}}
-footer{margin-top:34px;text-align:center;color:var(--muted);font-size:.8rem}
-footer b{color:var(--violet)}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:root{--bg:#07090f;--panel:rgba(255,255,255,.05);--line:rgba(255,255,255,.1);--tx:#e8eef7;--mut:#8b97aa;--cy:#00f3ff;--vi:#a78bfa;--em:#34d399;--red:#f87171}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Cairo',sans-serif;background:radial-gradient(900px 500px at 85% -10%,rgba(167,139,250,.18),transparent),radial-gradient(700px 500px at 0% 110%,rgba(0,243,255,.12),transparent),var(--bg);color:var(--tx);min-height:100vh;padding:20px;display:flex;justify-content:center}
+main{width:100%;max-width:560px;display:flex;flex-direction:column;gap:16px}
+header{display:flex;justify-content:space-between;align-items:center;padding:6px 2px}
+h1{font-size:1.9rem;font-weight:800;letter-spacing:-.5px}
+h1 span{color:var(--cy)}
+.sub{color:var(--mut);font-size:.85rem}
+.status{display:flex;align-items:center;gap:8px;font-size:.85rem;padding:7px 14px;border-radius:99px;background:var(--panel);border:1px solid var(--line)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mut)}
+.status.wait .dot{background:#fbbf24;animation:p 1.2s infinite}
+.status.on .dot{background:var(--em);box-shadow:0 0 10px var(--em)}
+.status.off .dot{background:var(--red)}
+@keyframes p{50%{opacity:.3}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.card h2{font-size:1.05rem;margin-bottom:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--tx);padding:11px 18px;border-radius:12px;font-weight:600;transition:.15s}
+button:hover{border-color:var(--cy)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+button.main{background:var(--cy);color:#03161a;border-color:var(--cy);flex:1}
+button.main:hover{box-shadow:0 0 22px rgba(0,243,255,.4)}
+button:disabled{opacity:.5;cursor:not-allowed}
+input{font-family:'Fira Code',monospace;font-size:1.4rem;letter-spacing:.4em;text-align:center;width:100%;max-width:170px;background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--cy);padding:10px;border-radius:12px;direction:ltr}
+.code{font-family:'Fira Code',monospace;font-size:2.6rem;letter-spacing:.35em;color:var(--cy);direction:ltr;text-align:center;padding:6px 0 6px .35em}
+.center{text-align:center}
+#qr{display:flex;justify-content:center;margin:10px 0}
+#qr img{background:#fff;padding:8px;border-radius:12px;width:160px;height:160px}
+.hint{color:var(--mut);font-size:.82rem;line-height:1.7;margin-top:8px}
+.hide{display:none!important}
+.item{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border:0}
+.item .t{flex:1;font-family:'Fira Code',monospace;font-size:.82rem;direction:ltr;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{font-size:.7rem;padding:2px 8px;border-radius:99px;border:1px solid var(--line)}
+.tag.in{color:var(--em)}.tag.out{color:var(--vi)}
+.empty{color:var(--mut);font-size:.88rem;text-align:center;padding:14px 0}
+#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,30px);background:rgba(10,16,28,.95);border:1px solid var(--cy);color:var(--tx);padding:13px 20px;border-radius:14px;opacity:0;pointer-events:none;transition:.3s;box-shadow:0 0 28px rgba(0,243,255,.25);max-width:92vw;text-align:center;z-index:9}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<main>
 <header>
-  <div class="logo"><i>📎</i><div>AirClip<small>الحافظة الذكية العابرة للأجهزة</small></div></div>
-  <div class="status" id="status"><span class="dot"></span><span id="statusTxt">غير متصل</span></div>
+  <div><h1>Air<span>Clip</span></h1><div class="sub">الحافظة الخلفية المباشرة</div></div>
+  <div id="status" class="status off"><span class="dot"></span><span id="stxt">غير متصل</span></div>
 </header>
 
-<!-- شاشة الاقتران -->
-<main id="pair">
-  <h1>انسخ على الكمبيوتر، والصق على الهاتف.</h1>
-  <p class="lead">اربط جهازين باتصال مباشر ومشفّر (P2P) خلال ثوانٍ. لا تطبيقات، ولا رسائل لنفسك على واتساب، ولا يمر نصك عبر أي خادم.</p>
-  <div class="grid">
-    <section class="glass room" aria-label="إنشاء غرفة">
-      <h2>الجهاز الأول: أنشئ غرفة</h2>
-      <div id="roomIdle">
-        <p class="hint" style="margin-bottom:16px">سيظهر كود من 4 أرقام ورمز QR لتمسحه بالجهاز الثاني.</p>
-        <button class="btn pri" id="createBtn">إنشاء غرفة جديدة</button>
-      </div>
-      <div id="roomLive" class="hidden">
-        <div class="num" id="roomCode">----</div>
-        <div id="qr"></div>
-        <p class="hint">امسح الرمز بكاميرا الهاتف أو أدخل الكود في الجهاز الثاني.<br>بانتظار الجهاز الآخر…</p>
-      </div>
-    </section>
-    <section class="glass" aria-label="الانضمام لغرفة">
-      <h2>الجهاز الثاني: انضم بالكود</h2>
-      <input class="code" id="joinInput" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="كود الغرفة">
-      <button class="btn pri" id="joinBtn" style="width:100%">اتصال</button>
-      <p class="hint" style="margin-top:12px">إذا مسحت رمز QR فسيتم الاتصال تلقائياً.</p>
-    </section>
+<section id="setup" class="card">
+  <h2>اربط جهازين لأول مرة</h2>
+  <div class="row"><button class="main" id="create">إنشاء غرفة جديدة</button></div>
+  <div id="roomBox" class="hide center">
+    <div class="code" id="roomCode">----</div>
+    <div id="qr"></div>
+    <div class="hint">أدخل هذا الكود على الجهاز الثاني، أو امسح رمز QR بكاميرا الهاتف.</div>
   </div>
+  <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+  <h2>انضم إلى غرفة</h2>
+  <div class="row" style="align-items:center">
+    <input id="joinCode" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="كود الغرفة">
+    <button id="join">انضمام</button>
+  </div>
+</section>
+
+<section id="syncCard" class="card hide">
+  <h2>المزامنة التلقائية</h2>
+  <div class="row"><button class="main" id="enable">تفعيل المزامنة الخلفية التلقائية (Enable Auto-Sync)</button></div>
+  <div class="hint" id="syncHint">اضغط الزر مرة واحدة ليمنحك المتصفح صلاحية قراءة الحافظة وكتابتها.</div>
+</section>
+
+<section class="card">
+  <h2>آخر النصوص المنقولة</h2>
+  <div id="log"><div class="empty">لا شيء بعد. انسخ نصاً على أحد الجهازين وسيظهر هنا.</div></div>
+</section>
+<p class="hint center">تنبيه: المتصفحات لا تسمح بقراءة الحافظة إلا والصفحة مفتوحة وظاهرة. أبقِ AirClip في تبويب مفتوح على الجهازين.</p>
 </main>
-
-<!-- الشاشة الرئيسية -->
-<main id="app" class="hidden">
-  <div class="toggles">
-    <label class="tg"><input type="checkbox" id="autoCopy"><b></b>النسخ التلقائي عند الاستلام</label>
-    <label class="tg"><input type="checkbox" id="autoSync"><b></b>مراقبة الحافظة (Auto-Sync)</label>
-    <button class="btn sm" id="leaveBtn" style="margin-inline-start:auto">قطع الاتصال</button>
-  </div>
-
-  <section class="glass">
-    <h2>اكتب أو الصق نصاً لإرساله</h2>
-    <textarea id="input" placeholder="اكتب نصاً أو رابطاً أو كوداً هنا… (Ctrl + Enter للإرسال)"></textarea>
-    <div class="row">
-      <button class="btn pri" id="sendBtn">إرسال الآن</button>
-      <button class="btn" id="pasteBtn">لصق سريع من الحافظة وإرساله</button>
-    </div>
-  </section>
-
-  <div id="stage" aria-label="منطقة قذف البطاقات">
-    <div class="edge t"></div><div class="edge b"></div><div class="edge l"></div><div class="edge r"></div>
-    <div id="empty"><div>البطاقة تظهر هنا.<br>اسحبها بإصبعك أو الماوس واقذفها نحو أي حافة لتنتقل إلى الجهاز الآخر.</div></div>
-    <div id="card" class="hidden"><div class="lbl"><span id="cardLbl">بطاقتك</span><span>اضغط للنسخ</span></div><div class="body" id="cardBody"></div></div>
-  </div>
-
-  <div class="sec-head"><h2 style="margin:0">سجل الجلسة</h2><button class="btn sm" id="clearBtn">مسح السجل</button></div>
-  <ul id="hist"><li style="border-inline-start-color:var(--line);color:var(--muted);justify-content:center" id="histEmpty">لا توجد عناصر بعد.</li></ul>
-</main>
-
-<footer>صُنع بـ ♥ لقناة <b>AymanStack</b> — الاتصال مباشر بين الجهازين عبر WebRTC</footer>
-</div>
-<div id="toasts" aria-live="polite"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script>
-(()=>{
-const $=s=>document.querySelector(s);
-const PREFIX='airclip-v1-';
-let peer=null,conns=[],code='',curText='',lastClip='',pendingCopy=null,hostTries=0;
-let tx=0,ty=0,drag=null,busy=false;
-const card=$('#card'),stage=$('#stage'),input=$('#input');
+(function(){
+  'use strict';
+  var PREFIX='airclip-aymanstack-';
+  var peer=null, conn=null, syncOn=false, lastText='', lastSent='', history=[], pollTimer=null;
+  var $=function(id){return document.getElementById(id)};
 
-/* ---------- الإعدادات ---------- */
-const store={get(k,d){try{const v=localStorage.getItem('ac_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('ac_'+k,JSON.stringify(v))}catch(e){}}};
-$('#autoCopy').checked=store.get('autoCopy',true);
-$('#autoSync').checked=store.get('autoSync',true);
-$('#autoCopy').onchange=e=>store.set('autoCopy',e.target.checked);
-$('#autoSync').onchange=e=>{store.set('autoSync',e.target.checked);if(e.target.checked)poll(true)};
+  function setStatus(kind,text){
+    var s=$('status'); s.className='status '+kind; $('stxt').textContent=text;
+  }
+  function toast(msg){
+    var t=$('toast'); t.textContent=msg; t.classList.add('show');
+    clearTimeout(toast.id); toast.id=setTimeout(function(){t.classList.remove('show')},3200);
+  }
+  function randCode(){return String(Math.floor(1000+Math.random()*9000))}
 
-/* ---------- أدوات ---------- */
-function toast(msg,err){const t=document.createElement('div');t.className='toast'+(err?' err':'');t.textContent=msg;$('#toasts').appendChild(t);setTimeout(()=>{t.style.transition='.3s';t.style.opacity=0;setTimeout(()=>t.remove(),300)},2800)}
-async function copyText(text){
-  try{await navigator.clipboard.writeText(text);return true}catch(e){}
-  try{const a=document.createElement('textarea');a.value=text;a.style.cssText='position:fixed;opacity:0;top:0';document.body.appendChild(a);a.select();const ok=document.execCommand('copy');a.remove();return ok}catch(e){return false}
-}
-function setStatus(){
-  const s=$('#status'),n=conns.filter(c=>c.open).length;
-  s.className='status'+(n?' on':(peer?' wait':''));
-  $('#statusTxt').textContent=n?'متصل ('+n+')':(peer?'بانتظار الاتصال…':'غير متصل');
-}
-function show(app){$('#pair').classList.toggle('hidden',app);$('#app').classList.toggle('hidden',!app)}
-function timeStr(ts){return new Date(ts).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})}
+  function makePeer(id){
+    if(typeof Peer==='undefined'){toast('تعذر تحميل مكتبة PeerJS. تحقق من اتصال الإنترنت.');return null}
+    var p=id?new Peer(PREFIX+id):new Peer();
+    p.on('error',function(e){
+      if(e.type==='unavailable-id'&&id){toast('هذا الكود مستخدم، جرّب إنشاء غرفة جديدة.');setStatus('off','غير متصل')}
+      else if(e.type==='peer-unavailable'){toast('لا توجد غرفة بهذا الكود.');setStatus('off','غير متصل')}
+      else{toast('خطأ في الاتصال: '+e.type);setStatus('off','غير متصل')}
+    });
+    return p;
+  }
 
-/* ---------- الاتصال (PeerJS) ---------- */
-function reset(){try{peer&&peer.destroy()}catch(e){}peer=null;conns=[];code='';setStatus()}
-function startHost(){
-  reset();
-  code=String(Math.floor(1000+Math.random()*9000));
-  peer=new Peer(PREFIX+code);
-  peer.on('open',()=>{
-    hostTries=0;
-    $('#roomIdle').classList.add('hidden');$('#roomLive').classList.remove('hidden');
-    $('#roomCode').textContent=code;
-    $('#qr').innerHTML='';
-    new QRCode($('#qr'),{text:location.origin+location.pathname+'#'+code,width:170,height:170,colorDark:'#070b14',colorLight:'#ffffff'});
-    setStatus();
-  });
-  peer.on('connection',setupConn);
-  peer.on('error',e=>{
-    if(e.type==='unavailable-id'&&hostTries++<6)return startHost();
-    toast('تعذر إنشاء الغرفة: '+e.type,true);
-  });
-  peer.on('disconnected',()=>{try{peer.reconnect()}catch(e){}});
-  setStatus();
-}
-function join(c){
-  if(!/^\d{4}$/.test(c))return toast('أدخل كوداً من 4 أرقام',true);
-  reset();
-  peer=new Peer();
-  let done=false;
-  const fail=m=>{if(done)return;done=true;toast(m,true);reset()};
-  peer.on('open',()=>{
-    const conn=peer.connect(PREFIX+c,{reliable:true});
-    setupConn(conn);
-    setTimeout(()=>{if(!conn.open)fail('انتهت مهلة الاتصال. تأكد من الكود وحاول مجدداً.')},12000);
-    conn.on('open',()=>{done=true});
-  });
-  peer.on('error',e=>fail(e.type==='peer-unavailable'?'الغرفة غير موجودة. تحقق من الكود.':'خطأ في الاتصال: '+e.type));
-  setStatus();
-}
-function setupConn(c){
-  const onOpen=()=>{
-    if(!conns.includes(c))conns.push(c);
-    show(true);setStatus();toast('🔗 تم الاقتران بنجاح!');
-    if(navigator.vibrate)navigator.vibrate(60);
-  };
-  c.open?onOpen():c.on('open',onOpen);
-  c.on('data',onData);
-  const gone=()=>{conns=conns.filter(x=>x!==c);setStatus();toast('انقطع اتصال الجهاز الآخر',true)};
-  c.on('close',gone);c.on('error',gone);
-}
+  function createRoom(){
+    if(peer){peer.destroy();peer=null}
+    var code=randCode();
+    setStatus('wait','جاري البحث عن الجهاز الآخر');
+    peer=makePeer(code); if(!peer)return;
+    peer.on('open',function(){
+      $('roomCode').textContent=code; $('roomBox').classList.remove('hide');
+      try{
+        var qr=qrcode(0,'M'); qr.addData(location.origin+location.pathname+'?room='+code); qr.make();
+        $('qr').innerHTML=qr.createImgTag(5);
+      }catch(e){$('qr').innerHTML=''}
+    });
+    peer.on('connection',function(c){attach(c)});
+  }
 
-/* ---------- الإرسال والاستقبال ---------- */
-function send(text,dir){
-  if(!text||!text.trim())return false;
-  const live=conns.filter(c=>c.open);
-  if(!live.length){toast('لا يوجد جهاز متصل حالياً',true);return false}
-  const m={t:'clip',text,dx:dir?dir.x:0,dy:dir?dir.y:0,ts:Date.now()};
-  live.forEach(c=>c.send(m));
-  addHist(text,'out',m.ts);
-  return true;
-}
-async function onData(m){
-  if(!m||m.t!=='clip'||typeof m.text!=='string')return;
-  lastClip=m.text;
-  addHist(m.text,'in',m.ts||Date.now());
-  showCard(m.text,'in',{x:m.dx||0,y:m.dy||0});
-  if(navigator.vibrate)navigator.vibrate(30);
-  if($('#autoCopy').checked){
-    if(await copyText(m.text)){pendingCopy=null;toast('⚡ تم نسخ النص إلى حافظتك تلقائياً!')}
-    else{pendingCopy=m.text;toast('📥 وصل نص جديد — المس الشاشة لنسخه')}
-  }else toast('📥 وصلت بطاقة جديدة');
-}
-// عند عودة التركيز للصفحة (مثلاً الكمبيوتر) ننسخ آخر نص وصل أثناء غياب التركيز
-const flushCopy=async()=>{if(pendingCopy&&document.hasFocus()){const t=pendingCopy;if(await copyText(t)){pendingCopy=null;toast('⚡ تم نسخ النص إلى حافظتك تلقائياً!')}}};
-window.addEventListener('focus',flushCopy);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)flushCopy()});
-setInterval(flushCopy,800);
-// على الهاتف: أي لمسة تقرأ الحافظة (المتصفح يشترط لمسة من المستخدم)
-if(matchMedia('(pointer:coarse)').matches)document.addEventListener('pointerdown',e=>{if(!e.target.closest('#card,button,textarea,input,label'))poll(true)});
-// بعض المتصفحات تمنع النسخ دون لمسة المستخدم
-['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,async()=>{
-  if(pendingCopy){const t=pendingCopy;pendingCopy=null;if(await copyText(t))toast('⚡ تم نسخ النص إلى حافظتك تلقائياً!')}
-},true));
+  function joinRoom(code){
+    if(!/^\d{4}$/.test(code)){toast('أدخل كوداً من 4 أرقام.');return}
+    if(peer){peer.destroy();peer=null}
+    setStatus('wait','جاري الاتصال');
+    peer=makePeer(null); if(!peer)return;
+    peer.on('open',function(){attach(peer.connect(PREFIX+code,{reliable:true}))});
+  }
 
-/* ---------- البطاقة والفيزياء ---------- */
-function applyT(){card.style.transform=`translate(-50%,-50%) translate(${tx}px,${ty}px) rotate(${tx/28}deg)`}
-function showCard(text,kind,from){
-  curText=text;
-  $('#empty').classList.add('hidden');card.classList.remove('hidden');
-  $('#cardBody').textContent=text;
-  $('#cardLbl').textContent=kind==='in'?'⬇ وصلت من الجهاز الآخر':(kind==='sent'?'✓ أُرسلت — اقذفها مجدداً لإعادة الإرسال':'بطاقتك');
-  card.style.opacity=1;
-  if(kind==='in'&&(from.x||from.y)){
-    // تدخل من الحافة المقابلة لاتجاه القذف
-    card.style.transition='none';
-    tx=-from.x*stage.offsetWidth*1.3;ty=-from.y*stage.offsetHeight*1.3;applyT();
-    void card.offsetWidth;
-    card.style.transition='transform .55s cubic-bezier(.2,.9,.3,1.15)';
-    tx=0;ty=0;applyT();
-  }else{card.style.transition='transform .3s';tx=0;ty=0;applyT()}
-}
-function edges(on,dx,dy){
-  document.querySelectorAll('.edge').forEach(e=>e.classList.remove('hot'));
-  if(!on)return;
-  const k=Math.abs(dx)*stage.offsetHeight>Math.abs(dy)*stage.offsetWidth?(dx<0?'l':'r'):(dy<0?'t':'b');
-  stage.querySelector('.edge.'+k).classList.add('hot');
-}
-card.addEventListener('pointerdown',e=>{
-  if(busy)return;
-  card.setPointerCapture(e.pointerId);card.style.transition='none';
-  drag={x:e.clientX,y:e.clientY,ox:tx,oy:ty,pts:[[e.clientX,e.clientY,performance.now()]],moved:false};
-});
-card.addEventListener('pointermove',e=>{
-  if(!drag)return;
-  tx=drag.ox+e.clientX-drag.x;ty=drag.oy+e.clientY-drag.y;
-  if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>6)drag.moved=true;
-  drag.pts.push([e.clientX,e.clientY,performance.now()]);if(drag.pts.length>6)drag.pts.shift();
-  applyT();
-  edges(Math.abs(tx)>stage.offsetWidth*.22||Math.abs(ty)>stage.offsetHeight*.22,tx,ty);
-});
-const endDrag=async e=>{
-  if(!drag)return;
-  const d=drag;drag=null;edges(false);
-  if(!d.moved){if(await copyText(curText))toast('✅ تم نسخ النص');return}
-  const a=d.pts[0],b=d.pts[d.pts.length-1],dt=Math.max(b[2]-a[2],1);
-  const vx=(b[0]-a[0])/dt,vy=(b[1]-a[1])/dt,sp=Math.hypot(vx,vy);
-  const far=Math.abs(tx)>stage.offsetWidth*.32||Math.abs(ty)>stage.offsetHeight*.32;
-  if(sp>.6||far){
-    let dx=sp>.6?vx:tx,dy=sp>.6?vy:ty;const n=Math.hypot(dx,dy)||1;dx/=n;dy/=n;
-    fling({x:+dx.toFixed(3),y:+dy.toFixed(3)});
-  }else{card.style.transition='transform .45s cubic-bezier(.2,1.4,.4,1)';tx=0;ty=0;applyT()}
-};
-card.addEventListener('pointerup',endDrag);
-card.addEventListener('pointercancel',endDrag);
-function fling(dir){
-  if(!send(curText,dir)){card.style.transition='transform .5s cubic-bezier(.2,1.4,.4,1)';tx=0;ty=0;applyT();return}
-  busy=true;
-  card.style.transition='transform .4s cubic-bezier(.4,0,1,1),opacity .4s';
-  tx=dir.x*stage.offsetWidth*1.5;ty=dir.y*stage.offsetHeight*1.5;applyT();card.style.opacity=0;
-  toast('🚀 تم قذف البطاقة إلى الجهاز الآخر');
-  setTimeout(()=>{busy=false;showCard(curText,'sent')},450);
-}
+  function attach(c){
+    if(conn&&conn.open&&conn!==c){c.close();return}
+    conn=c;
+    c.on('open',function(){
+      setStatus('on','متصل');
+      $('syncCard').classList.remove('hide');
+      toast('تم الربط بنجاح. فعّل المزامنة على هذا الجهاز.');
+    });
+    c.on('data',onData);
+    c.on('close',function(){setStatus('off','انقطع الاتصال');conn=null});
+    c.on('error',function(){setStatus('off','انقطع الاتصال')});
+  }
 
-/* ---------- السجل ---------- */
-const hist=[];
-function addHist(text,dir,ts){
-  hist.unshift({text,dir,ts});if(hist.length>50)hist.pop();renderHist();
-}
-function renderHist(){
-  const ul=$('#hist');ul.innerHTML='';
-  if(!hist.length){ul.innerHTML='<li style="border-inline-start-color:var(--line);color:var(--muted);justify-content:center">لا توجد عناصر بعد.</li>';return}
-  hist.forEach(h=>{
-    const li=document.createElement('li');li.className=h.dir;
-    const tx=document.createElement('div');tx.className='tx';tx.textContent=h.text;tx.title='اضغط لوضعه على البطاقة';
-    const sm=document.createElement('small');sm.textContent=(h.dir==='in'?'وارد':'صادر')+' • '+timeStr(h.ts);
-    const box=document.createElement('div');box.style.cssText='flex:1;min-width:0';box.append(tx,sm);
-    tx.onclick=()=>showCard(h.text,h.dir==='in'?'in':'out',{x:0,y:0});
-    const b=document.createElement('button');b.className='btn sm';b.textContent='نسخ';
-    b.onclick=async()=>{toast(await copyText(h.text)?'✅ تم نسخ النص':'تعذر النسخ',false)};
-    li.append(box,b);ul.appendChild(li);
-  });
-}
-$('#clearBtn').onclick=()=>{hist.length=0;renderHist()};
+  function onData(msg){
+    if(!msg||msg.type!=='clip'||typeof msg.text!=='string')return;
+    lastText=msg.text; lastSent=msg.text;
+    addLog(msg.text,'in');
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(msg.text).then(function(){
+        toast('⚡ تم جلب النص من الجهاز الآخر ونسخه إلى حافظتك تلقائياً!');
+        if(navigator.vibrate)navigator.vibrate(60);
+      }).catch(function(){
+        toast('وصل نص جديد. المتصفح منع النسخ التلقائي، افتح AirClip واضغط نسخ من السجل.');
+      });
+    }
+  }
 
-/* ---------- مراقبة الحافظة ---------- */
-async function poll(manual){
-  if(!$('#autoSync').checked||!conns.some(c=>c.open))return;
-  if(!manual&&!document.hasFocus())return;
-  try{
-    const t=await navigator.clipboard.readText();
-    if(t&&t!==lastClip){lastClip=t;if(send(t,null))showCard(t,'out')}
-  }catch(e){if(manual)toast('اسمح للموقع بقراءة الحافظة من إعدادات المتصفح',true)}
-}
-setInterval(poll,1200);
-window.addEventListener('focus',()=>poll());
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll()});
-document.addEventListener('copy',()=>setTimeout(poll,80));
+  function send(text){
+    if(!conn||!conn.open||!text||text===lastSent)return;
+    lastSent=text; lastText=text;
+    conn.send({type:'clip',text:text,t:Date.now()});
+    addLog(text,'out');
+    toast('📤 تم إرسال النص إلى الجهاز الآخر');
+  }
 
-/* ---------- الأحداث ---------- */
-$('#createBtn').onclick=startHost;
-$('#joinBtn').onclick=()=>join($('#joinInput').value.trim());
-$('#joinInput').addEventListener('input',e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,4));
-$('#joinInput').addEventListener('keydown',e=>{if(e.key==='Enter')join(e.target.value.trim())});
-$('#sendBtn').onclick=()=>{const t=input.value;if(!t.trim())return toast('اكتب نصاً أولاً',true);lastClip=t;if(send(t,null)){showCard(t,'out');input.value=''}};
-input.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey))$('#sendBtn').click()});
-input.addEventListener('paste',()=>setTimeout(()=>{if($('#autoSync').checked&&input.value.trim())$('#sendBtn').click()},30));
-$('#pasteBtn').onclick=async()=>{
-  try{const t=await navigator.clipboard.readText();if(!t)return toast('الحافظة فارغة',true);lastClip=t;if(send(t,null))showCard(t,'out')}
-  catch(e){toast('اسمح بالوصول للحافظة، أو الصق النص في المربع أعلاه',true)}
-};
-$('#leaveBtn').onclick=()=>{reset();show(false);$('#roomIdle').classList.remove('hidden');$('#roomLive').classList.add('hidden');history.replaceState(null,'',location.pathname)};
+  function readClipboard(){
+    if(!syncOn||!document.hasFocus())return;
+    navigator.clipboard.readText().then(function(t){
+      if(t&&t!==lastText)send(t);
+    }).catch(function(){});
+  }
 
-// الانضمام التلقائي عند مسح QR
-const h=location.hash.replace('#','');
-if(/^\d{4}$/.test(h)){$('#joinInput').value=h;join(h)}
-setStatus();
+  function enableSync(){
+    if(!navigator.clipboard||!navigator.clipboard.readText){
+      $('syncHint').textContent='متصفحك لا يدعم قراءة الحافظة. استخدم Chrome أو Edge أو Safari حديث عبر HTTPS.';return;
+    }
+    navigator.clipboard.readText().then(function(t){
+      syncOn=true; lastText=t||'';
+      $('enable').textContent='المزامنة تعمل ✓'; $('enable').disabled=true;
+      $('syncHint').textContent='يرصد AirClip أي نسخ جديد ويرسله فوراً. أبقِ التبويب مفتوحاً.';
+      window.addEventListener('focus',readClipboard);
+      document.addEventListener('visibilitychange',function(){if(!document.hidden)readClipboard()});
+      document.addEventListener('copy',function(){setTimeout(readClipboard,120)});
+      pollTimer=setInterval(readClipboard,1200);
+      toast('تم تفعيل المزامنة التلقائية');
+    }).catch(function(){
+      $('syncHint').textContent='تم رفض الصلاحية. اسمح للموقع بالوصول إلى الحافظة من إعدادات المتصفح ثم أعد المحاولة.';
+    });
+  }
+
+  function addLog(text,dir){
+    history.unshift({text:text,dir:dir});
+    history=history.slice(0,5);
+    var box=$('log'); box.innerHTML='';
+    history.forEach(function(h){
+      var d=document.createElement('div'); d.className='item';
+      var tag=document.createElement('span'); tag.className='tag '+h.dir; tag.textContent=h.dir==='in'?'وارد':'صادر';
+      var t=document.createElement('span'); t.className='t'; t.textContent=h.text; t.title=h.text;
+      var b=document.createElement('button'); b.textContent='نسخ';
+      b.addEventListener('click',function(){
+        navigator.clipboard.writeText(h.text).then(function(){lastText=h.text;lastSent=h.text;toast('تم النسخ')}).catch(function(){toast('تعذر النسخ')});
+      });
+      d.appendChild(tag);d.appendChild(t);d.appendChild(b);box.appendChild(d);
+    });
+  }
+
+  $('create').addEventListener('click',createRoom);
+  $('join').addEventListener('click',function(){joinRoom($('joinCode').value.trim())});
+  $('joinCode').addEventListener('keydown',function(e){if(e.key==='Enter')joinRoom(this.value.trim())});
+  $('enable').addEventListener('click',enableSync);
+
+  var q=new URLSearchParams(location.search).get('room');
+  if(q&&/^\d{4}$/.test(q)){$('joinCode').value=q;joinRoom(q)}
 })();
 </script>
 </body>
